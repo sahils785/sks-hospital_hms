@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   application:
@@ -28,14 +28,14 @@ spring:
       routes:
         # Auth Service
         - id: auth-service
-          uri: lb://auth-service
+          uri: ${AUTH_SERVICE_URL:lb://auth-service}
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=0
 
         - id: user-service
-          uri: lb://auth-service
+          uri: ${AUTH_SERVICE_URL:lb://auth-service}
           predicates:
             - Path=/api/users/**
           filters:
@@ -43,7 +43,7 @@ spring:
 
         # Patient Service
         - id: patient-service
-          uri: lb://patient-service
+          uri: ${PATIENT_SERVICE_URL:lb://patient-service}
           predicates:
             - Path=/api/patients/**
           filters:
@@ -51,7 +51,7 @@ spring:
 
         # Doctor Service
         - id: doctor-service
-          uri: lb://doctor-service
+          uri: ${DOCTOR_SERVICE_URL:lb://doctor-service}
           predicates:
             - Path=/api/doctors/**
           filters:
@@ -59,7 +59,7 @@ spring:
 
         # Appointment Service
         - id: appointment-service
-          uri: lb://appointment-service
+          uri: ${APPOINTMENT_SERVICE_URL:lb://appointment-service}
           predicates:
             - Path=/api/appointments/**
           filters:
@@ -67,7 +67,7 @@ spring:
 
         # Prescription Service
         - id: prescription-service
-          uri: lb://prescription-service
+          uri: ${PRESCRIPTION_SERVICE_URL:lb://prescription-service}
           predicates:
             - Path=/api/prescriptions/**
           filters:
@@ -75,7 +75,7 @@ spring:
 
         # Billing Service
         - id: billing-service
-          uri: lb://billing-service
+          uri: ${BILLING_SERVICE_URL:lb://billing-service}
           predicates:
             - Path=/api/billing/**
           filters:
@@ -83,7 +83,7 @@ spring:
 
         # Notification Service
         - id: notification-service
-          uri: lb://notification-service
+          uri: ${NOTIFICATION_SERVICE_URL:lb://notification-service}
           predicates:
             - Path=/api/notifications/**
           filters:
@@ -91,7 +91,7 @@ spring:
 
         # Audit Service
         - id: audit-service
-          uri: lb://audit-service
+          uri: ${AUDIT_SERVICE_URL:lb://audit-service}
           predicates:
             - Path=/api/audit/**
           filters:
@@ -162,6 +162,7 @@ jwt:
 
 eureka:
   client:
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
     service-url:
       defaultZone: ${EUREKA_URL:http://eureka:eureka_secret@localhost:8761/eureka/}
     fetch-registry: true

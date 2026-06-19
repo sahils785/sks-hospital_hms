@@ -1,5 +1,5 @@
 server:
-  port: 8087
+  port: ${PORT:8087}
 spring:
   application:
     name: notification-service
@@ -26,6 +26,7 @@ spring:
     password: ${RABBITMQ_PASSWORD:hospital_pass}
 eureka:
   client:
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
     service-url:
       defaultZone: ${EUREKA_URL:http://eureka:eureka_secret@localhost:8761/eureka/}
   instance:
