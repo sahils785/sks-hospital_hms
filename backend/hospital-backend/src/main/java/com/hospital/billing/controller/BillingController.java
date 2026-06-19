@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@RestController @RequestMapping("/api/billing") @RequiredArgsConstructor
+@RestController @RequestMapping("/billing") @RequiredArgsConstructor
 @Tag(name = "Billing", description = "Billing and payments")
 public class BillingController {
 

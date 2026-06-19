@@ -1,14 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  --primary: #818cf8;
+  --primary: #6366f1;
   --primary-dark: #4f46e5;
-  --secondary: #2dd4bf;
-  --background: #0B1120;
-  --surface: #1e293b;
+  --secondary: #14b8a6;
+  --background: #090d16;
+  --surface: rgba(17, 24, 39, 0.7);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --border: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.08);
 }
 
 body {
@@ -19,7 +23,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
-  background-image: radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(13, 148, 136, 0.1) 0, transparent 50%);
+  background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0, transparent 50%), 
+                    radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.12) 0, transparent 50%);
   color: var(--text-main);
   overflow-x: hidden;
 }
@@ -32,7 +37,7 @@ body::before {
   left: 50%;
   transform: translate(-50%, -50%) rotate(-30deg);
   font-size: 12vw;
-  color: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.015);
   font-weight: 800;
   white-space: nowrap;
   z-index: -1;
@@ -77,11 +82,11 @@ main > * {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 * {

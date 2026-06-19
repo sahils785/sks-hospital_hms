@@ -18,7 +18,7 @@ import java.util.Set;
  * User management endpoints (admin operations).
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Tag(name = "User Management", description = "Admin user management operations")
 public class UserController {

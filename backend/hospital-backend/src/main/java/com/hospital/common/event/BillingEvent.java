@@ -30,6 +30,8 @@ public class BillingEvent implements Serializable {
     private String paymentStatus;
     private String paymentMethod;
     private EventType eventType;
+    private BigDecimal amount;
+    private BillingStatus status;
     private LocalDateTime timestamp;
 
     public enum EventType {
@@ -38,5 +40,10 @@ public class BillingEvent implements Serializable {
         PAYMENT_FAILED,
         REFUND_ISSUED,
         INSURANCE_CLAIMED
+    }
+
+    public enum BillingStatus {
+        GENERATED,
+        PAID
     }
 }

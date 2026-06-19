@@ -4,7 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import './api/mock'; // Import the mock adapter so it intercepts all axios calls
+// import './api/mock'; // Import the mock adapter so it intercepts all axios calls
 
 
 const queryClient = new QueryClient({

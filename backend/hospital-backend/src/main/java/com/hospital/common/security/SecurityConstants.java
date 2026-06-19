@@ -21,7 +21,7 @@ public final class SecurityConstants {
     public static final long REFRESH_TOKEN_EXPIRATION = 604_800_000;  // 7 days
 
     // API paths
-    public static final String AUTH_BASE_PATH = "/api/auth/**";
+    public static final String AUTH_BASE_PATH = "/auth/**";
     public static final String ACTUATOR_PATH = "/actuator/**";
     public static final String SWAGGER_PATH = "/v3/api-docs/**";
     public static final String SWAGGER_UI_PATH = "/swagger-ui/**";

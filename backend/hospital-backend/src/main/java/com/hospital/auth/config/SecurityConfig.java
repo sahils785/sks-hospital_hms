@@ -41,15 +41,15 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
-                        .requestMatchers("/api/auth/login", "/api/auth/register",
-                                "/api/auth/refresh", "/api/auth/forgot-password").permitAll()
+                        .requestMatchers("/auth/login", "/auth/register",
+                                "/auth/refresh", "/auth/forgot-password").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**",
                                 "/swagger-ui.html").permitAll()
                         // Admin-only endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/users/*/roles").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/users/*/status").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/users/*/roles").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/users/*/status").hasRole("ADMIN")
                         // Authenticated endpoints
                         .anyRequest().authenticated()
                 )

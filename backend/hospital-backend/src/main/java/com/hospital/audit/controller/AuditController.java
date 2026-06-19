@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@RestController @RequestMapping("/api/audit") @RequiredArgsConstructor
+@RestController @RequestMapping("/audit") @RequiredArgsConstructor
 @Tag(name = "Audit Logs", description = "Audit log viewing")
 public class AuditController {
 

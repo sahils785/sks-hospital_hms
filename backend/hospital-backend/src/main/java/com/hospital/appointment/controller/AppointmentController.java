@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@RestController @RequestMapping("/api/appointments") @RequiredArgsConstructor
+@RestController @RequestMapping("/appointments") @RequiredArgsConstructor
 @Tag(name = "Appointments", description = "Appointment booking and management")
 public class AppointmentController {
 

@@ -3,6 +3,10 @@ package com.hospital.auth;
 import com.hospital.auth.entity.Role;
 import com.hospital.auth.entity.User;
 import com.hospital.auth.repository.UserRepository;
+import com.hospital.doctor.entity.Doctor;
+import com.hospital.doctor.repository.DoctorRepository;
+import com.hospital.patient.entity.Patient;
+import com.hospital.patient.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -18,6 +22,8 @@ import java.util.Set;
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -51,7 +57,23 @@ public class DataInitializer implements CommandLineRunner {
                     .enabled(true)
                     .roles(new HashSet<>(Set.of(Role.DOCTOR)))
                     .build();
-            userRepository.save(doctor);
+            doctor = userRepository.save(doctor);
+
+            Doctor doctorEntity = Doctor.builder()
+                    .userId(doctor.getId())
+                    .firstName("John")
+                    .lastName("Smith")
+                    .email("dr.smith@hospital.com")
+                    .phone("+1234567891")
+                    .specialization("Cardiology")
+                    .licenseNumber("MD12345")
+                    .department("Cardiology")
+                    .experienceYears(10)
+                    .consultationFee(new java.math.BigDecimal("150.00"))
+                    .bio("Experienced cardiologist specializing in heart health.")
+                    .available(true)
+                    .build();
+            doctorRepository.save(doctorEntity);
 
             // 3. Receptionist
             User receptionist = User.builder()
@@ -77,7 +99,20 @@ public class DataInitializer implements CommandLineRunner {
                     .enabled(true)
                     .roles(new HashSet<>(Set.of(Role.PATIENT)))
                     .build();
-            userRepository.save(patient);
+            patient = userRepository.save(patient);
+
+            Patient patientEntity = Patient.builder()
+                    .userId(patient.getId())
+                    .firstName("Jane")
+                    .lastName("Doe")
+                    .email("patient@hospital.com")
+                    .phone("+1234567893")
+                    .dateOfBirth(java.time.LocalDate.of(1990, 5, 15))
+                    .gender(Patient.Gender.FEMALE)
+                    .bloodGroup("O+")
+                    .address("123 Main St, New York, NY")
+                    .build();
+            patientRepository.save(patientEntity);
 
             // 5. Billing Staff
             User billing = User.builder()
@@ -92,7 +127,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             userRepository.save(billing);
 
-            log.info("Demo users seeded successfully!");
+            log.info("Demo users and profile entities seeded successfully!");
         } else {
             log.info("Database contains existing users. Seeding skipped.");
         }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Drawer, AppBar, Toolbar, Typography, List, ListItem, ListItemIcon, ListItemText, Divider, IconButton, Button } from '@mui/material';
+import { Box, Drawer, AppBar, Toolbar, Typography, List, ListItemIcon, ListItemText, Divider, IconButton, Button, ListItemButton } from '@mui/material';
 import { Menu as MenuIcon, Dashboard, People, LocalHospital, EventNote, Receipt, ExitToApp, LocalPharmacy } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -37,8 +37,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <Divider />
       <List>
         {allowedMenus.map((item) => (
-          <ListItem 
-            button 
+          <ListItemButton 
             key={item.text} 
             onClick={() => navigate(item.path)}
             selected={location.pathname.startsWith(item.path)}
@@ -59,7 +58,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           >
             <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} primaryTypographyProps={{ fontWeight: 500 }} />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </div>

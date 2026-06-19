@@ -143,8 +143,9 @@ public class AppointmentService {
 
     @Transactional(readOnly = true)
     public List<AppointmentResponse> getTodayAppointments(Long doctorId) {
-        LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-        return appointmentRepository.findDoctorAppointmentsForDate(doctorId, today)
+        LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime tomorrow = today.plusDays(1);
+        return appointmentRepository.findDoctorAppointmentsForDate(doctorId, today, tomorrow)
                 .stream().map(this::toResponse).toList();
     }
 

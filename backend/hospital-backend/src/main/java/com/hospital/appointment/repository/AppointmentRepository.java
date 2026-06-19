@@ -23,9 +23,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             Long doctorId, LocalDateTime start, LocalDateTime end, AppointmentStatus excludeStatus);
 
     @Query("SELECT a FROM Appointment a WHERE a.doctorId = :doctorId AND " +
-            "DATE(a.appointmentDateTime) = DATE(:date) AND a.status != 'CANCELLED'")
+            "a.appointmentDateTime >= :start AND a.appointmentDateTime < :end AND a.status != 'CANCELLED'")
     List<Appointment> findDoctorAppointmentsForDate(
-            @Param("doctorId") Long doctorId, @Param("date") LocalDateTime date);
+            @Param("doctorId") Long doctorId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end);
 
     @Query("SELECT a FROM Appointment a WHERE a.doctorId = :doctorId AND " +
             "a.appointmentDateTime BETWEEN :start AND :end AND a.status IN ('SCHEDULED', 'CONFIRMED')")
@@ -40,6 +42,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(a) FROM Appointment a WHERE a.doctorId = :doctorId AND " +
-            "DATE(a.appointmentDateTime) = CURRENT_DATE AND a.status NOT IN ('CANCELLED', 'NO_SHOW')")
-    long countTodayAppointments(@Param("doctorId") Long doctorId);
+            "a.appointmentDateTime >= :start AND a.appointmentDateTime < :end AND a.status NOT IN ('CANCELLED', 'NO_SHOW')")
+    long countTodayAppointments(
+            @Param("doctorId") Long doctorId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end);
+
+    long countByStatus(AppointmentStatus status);
 }

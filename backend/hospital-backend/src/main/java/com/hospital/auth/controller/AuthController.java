@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * Authentication endpoints: login, register, token refresh, logout.
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Authentication and token management")
 public class AuthController {

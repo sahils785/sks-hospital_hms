@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@RestController @RequestMapping("/api/prescriptions") @RequiredArgsConstructor
+@RestController @RequestMapping("/prescriptions") @RequiredArgsConstructor
 @Tag(name = "Prescriptions", description = "Prescription management")
 public class PrescriptionController {
 

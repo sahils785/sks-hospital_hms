@@ -16,15 +16,15 @@ public class AuditListenerService {
 
     @EventListener
     public void handleAuditEvent(AuditEvent event) {
-        log.info("Received AuditEvent: {} on {} by {}", event.getAction(), event.getResourceType(), event.getUsername());
+        log.info("Received AuditEvent: {} on {} by {}", event.getAction(), event.getEntityType(), event.getUsername());
         
         AuditLog auditLog = AuditLog.builder()
                 .userId(event.getUserId())
                 .username(event.getUsername())
                 .action(event.getAction())
-                .resourceType(event.getResourceType())
-                .resourceId(event.getResourceId())
-                .details(event.getDetails())
+                .resourceType(event.getEntityType())
+                .resourceId(event.getEntityId() != null ? event.getEntityId().toString() : null)
+                .details(event.getDescription())
                 .ipAddress(event.getIpAddress())
                 .timestamp(event.getTimestamp())
                 .build();
