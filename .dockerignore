@@ -1,0 +1,31 @@
+# Git
+.git
+.gitignore
+
+# Maven
+**/target/
+*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Node
+**/node_modules/
+frontend/dist/
+
+# Docker
+**/docker-compose*.yml
+**/*.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+**/logs/
+*.log

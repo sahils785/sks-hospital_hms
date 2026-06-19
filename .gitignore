@@ -1,0 +1,48 @@
+# Build
+**/target/
+*.jar
+*.war
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+*.swp
+*.swo
+
+# Node
+**/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+**/logs/
+*.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+docker-compose.override.yml
+
+# Maven
+*.orig
+*.rej
+
+# Coverage
+**/coverage/
+**/target/site/jacoco/
+
+# Portable Maven
+.maven/
