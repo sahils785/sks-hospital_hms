@@ -20,17 +20,7 @@
     <description>Production-ready Microservices-based Hospital Management System</description>
 
     <modules>
-        <module>common-lib</module>
-        <module>discovery-service</module>
-        <module>api-gateway</module>
-        <module>auth-service</module>
-        <module>patient-service</module>
-        <module>doctor-service</module>
-        <module>appointment-service</module>
-        <module>prescription-service</module>
-        <module>billing-service</module>
-        <module>notification-service</module>
-        <module>audit-service</module>
+        <module>hospital-backend</module>
     </modules>
 
     <properties>
