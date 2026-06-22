@@ -9,39 +9,40 @@ import PrescriptionsList from './pages/Prescriptions/PrescriptionsList';
 import BillingList from './pages/Billing/BillingList';
 import MainLayout from './components/Layout/MainLayout';
 import ProtectedRoute from './components/Layout/ProtectedRoute';
+import Landing from './pages/Landing';
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',
-    primary: { main: '#818cf8', light: '#a5b4fc', dark: '#4f46e5' },
-    secondary: { main: '#2dd4bf', light: '#5eead4', dark: '#0d9488' },
-    background: { default: '#0B1120', paper: 'rgba(30, 41, 59, 0.7)' },
-    text: { primary: '#f8fafc', secondary: '#94a3b8' },
+    mode: 'light',
+    primary: { main: '#0f172a', light: '#334155', dark: '#020617' },
+    secondary: { main: '#0d9488', light: '#14b8a6', dark: '#115e59' },
+    background: { default: '#f4f6f8', paper: '#ffffff' },
+    text: { primary: '#0f172a', secondary: '#64748b' },
   },
   typography: { 
     fontFamily: '"Outfit", "Inter", sans-serif',
-    h4: { fontWeight: 700, letterSpacing: '-0.02em' },
-    h5: { fontWeight: 600, letterSpacing: '-0.01em' },
-    h6: { fontWeight: 600 },
+    h4: { fontWeight: 800, letterSpacing: '-0.02em', color: '#0f172a' },
+    h5: { fontWeight: 700, letterSpacing: '-0.01em', color: '#0f172a' },
+    h6: { fontWeight: 600, color: '#0f172a' },
     button: { fontWeight: 600 },
   },
-  shape: { borderRadius: 16 },
+  shape: { borderRadius: 20 },
   components: {
     MuiButton: { 
       styleOverrides: { 
         root: { 
           textTransform: 'none', 
-          borderRadius: '12px',
+          borderRadius: '24px',
           padding: '8px 24px',
           transition: 'all 0.2s ease-in-out',
           '&:hover': {
             transform: 'translateY(-1px)',
-            boxShadow: '0 8px 20px -6px rgba(79, 70, 229, 0.4)',
+            boxShadow: '0 8px 20px -6px rgba(15, 23, 42, 0.15)',
           }
         },
         containedSecondary: {
           '&:hover': {
-            boxShadow: '0 8px 20px -6px rgba(13, 148, 136, 0.4)',
+            boxShadow: '0 8px 20px -6px rgba(13, 148, 136, 0.2)',
           }
         }
       } 
@@ -50,9 +51,9 @@ const theme = createTheme({
       styleOverrides: { 
         root: { 
           backgroundImage: 'none',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255,255,255,0.05)',
-          boxShadow: '0 10px 40px -10px rgba(0,0,0,0.5)'
+          borderRadius: '24px',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.04)'
         } 
       } 
     },
@@ -60,21 +61,21 @@ const theme = createTheme({
       styleOverrides: {
         paper: {
           borderRadius: '24px',
-          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
-          backgroundColor: '#1e293b'
+          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)',
+          backgroundColor: '#ffffff'
         }
       }
     },
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
           padding: '16px',
         },
         head: {
           fontWeight: 600,
-          color: '#94a3b8',
-          backgroundColor: 'rgba(15, 23, 42, 0.5)',
+          color: '#475569',
+          backgroundColor: 'rgba(15, 23, 42, 0.03)',
         }
       }
     }
@@ -92,7 +93,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         
-        <Route path="/" element={<ProtectedRoute><MainLayout><Navigate to="/dashboard" replace /></MainLayout></ProtectedRoute>} />
+        <Route path="/" element={<Landing />} />
         
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
         
