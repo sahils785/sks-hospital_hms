@@ -125,8 +125,8 @@ const BillingList: React.FC = () => {
                   <TableCell>#{inv.id}</TableCell>
                   <TableCell>{format(new Date(inv.createdAt), 'MMM dd, yyyy')}</TableCell>
                   <TableCell sx={{ fontWeight: 'medium' }}>{inv.patientName}</TableCell>
-                  <TableCell>₹{inv.totalAmount.toFixed(2)}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>₹{inv.finalAmount.toFixed(2)}</TableCell>
+                  <TableCell>₹{Number(inv.totalAmount || 0).toFixed(2)}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>₹{Number(inv.finalAmount || 0).toFixed(2)}</TableCell>
                   <TableCell>
                     <Chip size="small" label={inv.status} color={getStatusColor(inv.status) as any} />
                   </TableCell>
@@ -213,15 +213,15 @@ const BillingList: React.FC = () => {
               <Box mt={4} p={2} bgcolor="#f8fafc" borderRadius={2}>
                 <Box display="flex" justifyContent="space-between" mb={1}>
                   <Typography variant="body1" sx={{ color: '#000' }}>Total Amount</Typography>
-                  <Typography variant="body1" sx={{ color: '#000' }}>₹{selectedInv.totalAmount.toFixed(2)}</Typography>
+                  <Typography variant="body1" sx={{ color: '#000' }}>₹{Number(selectedInv.totalAmount || 0).toFixed(2)}</Typography>
                 </Box>
                 <Box display="flex" justifyContent="space-between" mb={1}>
                   <Typography variant="body1" sx={{ color: '#000' }}>Discount / Adjustments</Typography>
-                  <Typography variant="body1" sx={{ color: '#000' }}>₹{(selectedInv.totalAmount - selectedInv.finalAmount).toFixed(2)}</Typography>
+                  <Typography variant="body1" sx={{ color: '#000' }}>₹{(Number(selectedInv.totalAmount || 0) - Number(selectedInv.finalAmount || 0)).toFixed(2)}</Typography>
                 </Box>
                 <Box display="flex" justifyContent="space-between" mt={2} pt={2} borderTop="1px solid #e2e8f0">
                   <Typography variant="h6" fontWeight="bold" sx={{ color: '#000' }}>Final Amount</Typography>
-                  <Typography variant="h6" fontWeight="bold" sx={{ color: '#1976d2' }}>₹{selectedInv.finalAmount.toFixed(2)}</Typography>
+                  <Typography variant="h6" fontWeight="bold" sx={{ color: '#1976d2' }}>₹{Number(selectedInv.finalAmount || 0).toFixed(2)}</Typography>
                 </Box>
               </Box>
             </Box>

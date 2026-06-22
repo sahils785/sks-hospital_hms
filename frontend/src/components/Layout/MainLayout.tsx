@@ -25,7 +25,13 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   ];
 
   const allowedMenus = menuItems.filter(item => 
-    item.roles.some(role => user?.roles.includes(role))
+    item.roles.some(role => {
+      const normalizedRole = role.startsWith('ROLE_') ? role.slice(5) : role;
+      return user?.roles.some(uRole => {
+        const normalizedURole = uRole.startsWith('ROLE_') ? uRole.slice(5) : uRole;
+        return normalizedRole === normalizedURole;
+      });
+    })
   );
 
   const drawer = (

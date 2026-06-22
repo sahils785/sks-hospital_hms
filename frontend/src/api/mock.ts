@@ -44,6 +44,35 @@ mock.onPost('/auth/login').reply(200, {
   }
 });
 
+// Mock analytics dashboard
+mock.onGet('/analytics/dashboard').reply(200, {
+  data: {
+    metrics: {
+      totalPatients: 1420,
+      totalDoctors: 48,
+      totalAppointments: 18,
+      completedAppointments: 12,
+      pendingInvoices: 4,
+      totalRevenue: 24850.00
+    },
+    charts: {
+      revenueHistory: [
+        { month: 'Jan', revenue: 15200 },
+        { month: 'Feb', revenue: 18400 },
+        { month: 'Mar', revenue: 16800 },
+        { month: 'Apr', revenue: 21900 },
+        { month: 'May', revenue: 23100 },
+        { month: 'Jun', revenue: 24850 }
+      ]
+    },
+    recentAppointments: [
+      { patientName: 'Rahul Sharma', doctorName: 'Dr. Rakesh Singh', status: 'SCHEDULED', appointmentDateTime: new Date().toISOString() },
+      { patientName: 'Amit Verma', doctorName: 'Dr. Priya Patel', status: 'CONFIRMED', appointmentDateTime: new Date(Date.now() + 3600000).toISOString() },
+      { patientName: 'Sneha Reddy', doctorName: 'Dr. Rakesh Singh', status: 'COMPLETED', appointmentDateTime: new Date(Date.now() - 7200000).toISOString() }
+    ]
+  }
+});
+
 // Patients endpoints
 mock.onGet(/\/patients\/\d+/).reply(() => {
   return [200, { data: patients[0] }];
