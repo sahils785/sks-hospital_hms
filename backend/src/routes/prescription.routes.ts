@@ -13,6 +13,13 @@ router.post(
 );
 
 router.get(
+  '/',
+  authenticate,
+  authorize([Role.ADMIN, Role.DOCTOR, Role.PHARMACIST, Role.PATIENT]),
+  prescriptionController.getAllPrescriptions
+);
+
+router.get(
   '/:id',
   authenticate,
   authorize([Role.ADMIN, Role.DOCTOR, Role.PHARMACIST, Role.PATIENT]),

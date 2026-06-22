@@ -3,13 +3,13 @@ import { NotFoundError, BadRequestError } from '../utils/errors';
 import { Decimal } from '@prisma/client/runtime/library';
 
 export const createDoctor = async (data: {
-  userId: number;
+  userId?: number;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
   specialization: string;
-  licenseNumber: string;
+  licenseNumber?: string;
   qualification?: string;
   experienceYears?: number;
   consultationFee?: number | string | Decimal;
@@ -23,15 +23,42 @@ export const createDoctor = async (data: {
     maxPatients?: number;
   }>;
 }) => {
+  let userId = data.userId;
+
+  if (!userId) {
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (existingUser) {
+      userId = existingUser.id;
+    } else {
+      const username = `${data.firstName.toLowerCase()}_${data.lastName.toLowerCase()}_${Date.now().toString().slice(-4)}`;
+      const user = await prisma.user.create({
+        data: {
+          username,
+          email: data.email,
+          passwordHash: '$2b$10$tJ24.XnL4hM2z.b2i0Wk7uqB.n/5fF78n.lSveO1Y.B.m2f.Z2C5m', // Doctor@123
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone || null,
+          roles: ['DOCTOR']
+        }
+      });
+      userId = user.id;
+    }
+  }
+
   const existingUser = await prisma.doctor.findUnique({
-    where: { userId: data.userId },
+    where: { userId },
   });
   if (existingUser) {
     throw new BadRequestError('Doctor profile already exists for this user');
   }
 
+  const licenseNumber = data.licenseNumber || `LIC-${userId}-${Date.now().toString().slice(-4)}`;
+
   const existingLicense = await prisma.doctor.findUnique({
-    where: { licenseNumber: data.licenseNumber },
+    where: { licenseNumber },
   });
   if (existingLicense) {
     throw new BadRequestError('License number is already registered');
@@ -40,13 +67,13 @@ export const createDoctor = async (data: {
   return await prisma.$transaction(async (tx) => {
     const doctor = await tx.doctor.create({
       data: {
-        userId: data.userId,
+        userId,
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
         phone: data.phone || null,
         specialization: data.specialization,
-        licenseNumber: data.licenseNumber,
+        licenseNumber,
         qualification: data.qualification || null,
         experienceYears: data.experienceYears || null,
         consultationFee: data.consultationFee ? new Decimal(data.consultationFee) : null,

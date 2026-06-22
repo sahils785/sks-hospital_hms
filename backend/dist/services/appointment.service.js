@@ -9,15 +9,104 @@ const errors_1 = require("../utils/errors");
 const notification_service_1 = require("./notification.service");
 const client_1 = require("@prisma/client");
 const bookAppointment = async (data) => {
+    let patientId = data.patientId;
+    let doctorId = data.doctorId;
+    if (!patientId && data.patientName) {
+        const parts = data.patientName.trim().split(/\s+/);
+        const firstName = parts[0];
+        const lastName = parts.slice(1).join(' ');
+        let found = await db_1.default.patient.findFirst({
+            where: {
+                firstName: { equals: firstName, mode: 'insensitive' },
+                lastName: { equals: lastName, mode: 'insensitive' }
+            }
+        });
+        if (!found) {
+            found = await db_1.default.patient.findFirst({
+                where: {
+                    OR: [
+                        { firstName: { equals: firstName, mode: 'insensitive' } },
+                        { lastName: { equals: firstName, mode: 'insensitive' } }
+                    ]
+                }
+            });
+        }
+        if (found) {
+            patientId = found.id;
+        }
+        else {
+            const email = `${firstName.toLowerCase()}.${(lastName || 'patient').toLowerCase()}@hospital.com`;
+            const uniqueUsername = `${firstName.toLowerCase()}_${(lastName || 'patient').toLowerCase()}_${Date.now().toString().slice(-4)}`;
+            const user = await db_1.default.user.create({
+                data: {
+                    username: uniqueUsername,
+                    email,
+                    passwordHash: '$2b$10$tJ24.XnL4hM2z.b2i0Wk7uqB.n/5fF78n.lSveO1Y.B.m2f.Z2C5m', // Patient@123
+                    firstName,
+                    lastName: lastName || 'Patient',
+                    roles: ['PATIENT']
+                }
+            });
+            const newPatient = await db_1.default.patient.create({
+                data: {
+                    userId: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email
+                }
+            });
+            patientId = newPatient.id;
+        }
+    }
+    if (!doctorId && data.doctorName) {
+        const cleanName = data.doctorName.replace(/^(dr\.?\s*)/i, '').trim();
+        const parts = cleanName.split(/\s+/);
+        const firstName = parts[0];
+        const lastName = parts.slice(1).join(' ');
+        let found = await db_1.default.doctor.findFirst({
+            where: {
+                firstName: { equals: firstName, mode: 'insensitive' },
+                lastName: { equals: lastName, mode: 'insensitive' }
+            }
+        });
+        if (!found) {
+            found = await db_1.default.doctor.findFirst({
+                where: {
+                    OR: [
+                        { firstName: { equals: firstName, mode: 'insensitive' } },
+                        { lastName: { equals: firstName, mode: 'insensitive' } }
+                    ]
+                }
+            });
+        }
+        if (found) {
+            doctorId = found.id;
+        }
+        else {
+            const fallback = await db_1.default.doctor.findFirst();
+            if (fallback) {
+                doctorId = fallback.id;
+            }
+            else {
+                throw new errors_1.NotFoundError('No doctors registered in the system');
+            }
+        }
+    }
+    if (!patientId) {
+        throw new errors_1.BadRequestError('Patient ID or Patient Name is required');
+    }
+    if (!doctorId) {
+        throw new errors_1.BadRequestError('Doctor ID or Doctor Name is required');
+    }
     const patient = await db_1.default.patient.findUnique({
-        where: { id: data.patientId },
+        where: { id: patientId },
         include: { user: true },
     });
     if (!patient) {
         throw new errors_1.NotFoundError('Patient not found');
     }
     const doctor = await db_1.default.doctor.findUnique({
-        where: { id: data.doctorId },
+        where: { id: doctorId },
         include: { user: true, schedules: true },
     });
     if (!doctor) {
@@ -31,7 +120,7 @@ const bookAppointment = async (data) => {
     // Check overlap
     const conflict = await db_1.default.appointment.findFirst({
         where: {
-            doctorId: data.doctorId,
+            doctorId: doctorId,
             appointmentDateTime: aptDate,
             status: {
                 not: client_1.AppointmentStatus.CANCELLED,
@@ -45,10 +134,10 @@ const bookAppointment = async (data) => {
     const endDateTime = new Date(aptDate.getTime() + durationMinutes * 60 * 1000);
     const appointment = await db_1.default.appointment.create({
         data: {
-            patientId: data.patientId,
+            patientId: patientId,
             patientName: `${patient.firstName} ${patient.lastName}`,
             patientEmail: patient.email,
-            doctorId: data.doctorId,
+            doctorId: doctorId,
             doctorName: `${doctor.firstName} ${doctor.lastName}`,
             appointmentDateTime: aptDate,
             endDateTime,

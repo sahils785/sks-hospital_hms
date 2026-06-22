@@ -39,6 +39,7 @@ const auth_middleware_1 = require("../middleware/auth.middleware");
 const client_1 = require("@prisma/client");
 const router = (0, express_1.Router)();
 router.post('/', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR]), prescriptionController.createPrescription);
+router.get('/', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR, client_1.Role.PHARMACIST, client_1.Role.PATIENT]), prescriptionController.getAllPrescriptions);
 router.get('/:id', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR, client_1.Role.PHARMACIST, client_1.Role.PATIENT]), prescriptionController.getPrescription);
 router.get('/appointment/:appointmentId', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR, client_1.Role.PHARMACIST, client_1.Role.PATIENT]), prescriptionController.getPrescriptionByAppointment);
 router.get('/patient/:patientId', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR, client_1.Role.PHARMACIST, client_1.Role.PATIENT]), prescriptionController.getPatientPrescriptions);

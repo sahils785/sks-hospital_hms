@@ -73,3 +73,19 @@ export const getDoctorPrescriptions = async (req: Request, res: Response, next: 
     next(error);
   }
 };
+
+export const getAllPrescriptions = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const page = parseInt(req.query.page as string || '0', 10);
+    const size = parseInt(req.query.size as string || '20', 10);
+
+    const result = await prescriptionService.getAllPrescriptions(page, size);
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

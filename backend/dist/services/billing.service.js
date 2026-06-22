@@ -10,8 +10,59 @@ const notification_service_1 = require("./notification.service");
 const client_1 = require("@prisma/client");
 const library_1 = require("@prisma/client/runtime/library");
 const createInvoice = async (data) => {
+    let patientId = data.patientId;
+    if (!patientId && data.patientName) {
+        const parts = data.patientName.trim().split(/\s+/);
+        const firstName = parts[0];
+        const lastName = parts.slice(1).join(' ');
+        let found = await db_1.default.patient.findFirst({
+            where: {
+                firstName: { equals: firstName, mode: 'insensitive' },
+                lastName: { equals: lastName, mode: 'insensitive' }
+            }
+        });
+        if (!found) {
+            found = await db_1.default.patient.findFirst({
+                where: {
+                    OR: [
+                        { firstName: { equals: firstName, mode: 'insensitive' } },
+                        { lastName: { equals: firstName, mode: 'insensitive' } }
+                    ]
+                }
+            });
+        }
+        if (found) {
+            patientId = found.id;
+        }
+        else {
+            const email = `${firstName.toLowerCase()}.${(lastName || 'patient').toLowerCase()}@hospital.com`;
+            const uniqueUsername = `${firstName.toLowerCase()}_${(lastName || 'patient').toLowerCase()}_${Date.now().toString().slice(-4)}`;
+            const user = await db_1.default.user.create({
+                data: {
+                    username: uniqueUsername,
+                    email,
+                    passwordHash: '$2b$10$tJ24.XnL4hM2z.b2i0Wk7uqB.n/5fF78n.lSveO1Y.B.m2f.Z2C5m', // Patient@123
+                    firstName,
+                    lastName: lastName || 'Patient',
+                    roles: ['PATIENT']
+                }
+            });
+            const newPatient = await db_1.default.patient.create({
+                data: {
+                    userId: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email
+                }
+            });
+            patientId = newPatient.id;
+        }
+    }
+    if (!patientId) {
+        throw new errors_1.BadRequestError('Patient ID or Patient Name is required');
+    }
     const patient = await db_1.default.patient.findUnique({
-        where: { id: data.patientId },
+        where: { id: patientId },
     });
     if (!patient) {
         throw new errors_1.NotFoundError('Patient not found');
@@ -22,7 +73,7 @@ const createInvoice = async (data) => {
     const final = total.minus(discount).plus(tax);
     return await db_1.default.invoice.create({
         data: {
-            patientId: data.patientId,
+            patientId: patientId,
             patientName: `${patient.firstName} ${patient.lastName}`,
             patientEmail: patient.email,
             appointmentId: data.appointmentId || null,

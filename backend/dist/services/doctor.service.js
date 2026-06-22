@@ -8,14 +8,39 @@ const db_1 = __importDefault(require("../config/db"));
 const errors_1 = require("../utils/errors");
 const library_1 = require("@prisma/client/runtime/library");
 const createDoctor = async (data) => {
+    let userId = data.userId;
+    if (!userId) {
+        const existingUser = await db_1.default.user.findUnique({
+            where: { email: data.email },
+        });
+        if (existingUser) {
+            userId = existingUser.id;
+        }
+        else {
+            const username = `${data.firstName.toLowerCase()}_${data.lastName.toLowerCase()}_${Date.now().toString().slice(-4)}`;
+            const user = await db_1.default.user.create({
+                data: {
+                    username,
+                    email: data.email,
+                    passwordHash: '$2b$10$tJ24.XnL4hM2z.b2i0Wk7uqB.n/5fF78n.lSveO1Y.B.m2f.Z2C5m', // Doctor@123
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    phone: data.phone || null,
+                    roles: ['DOCTOR']
+                }
+            });
+            userId = user.id;
+        }
+    }
     const existingUser = await db_1.default.doctor.findUnique({
-        where: { userId: data.userId },
+        where: { userId },
     });
     if (existingUser) {
         throw new errors_1.BadRequestError('Doctor profile already exists for this user');
     }
+    const licenseNumber = data.licenseNumber || `LIC-${userId}-${Date.now().toString().slice(-4)}`;
     const existingLicense = await db_1.default.doctor.findUnique({
-        where: { licenseNumber: data.licenseNumber },
+        where: { licenseNumber },
     });
     if (existingLicense) {
         throw new errors_1.BadRequestError('License number is already registered');
@@ -23,13 +48,13 @@ const createDoctor = async (data) => {
     return await db_1.default.$transaction(async (tx) => {
         const doctor = await tx.doctor.create({
             data: {
-                userId: data.userId,
+                userId,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
                 phone: data.phone || null,
                 specialization: data.specialization,
-                licenseNumber: data.licenseNumber,
+                licenseNumber,
                 qualification: data.qualification || null,
                 experienceYears: data.experienceYears || null,
                 consultationFee: data.consultationFee ? new library_1.Decimal(data.consultationFee) : null,

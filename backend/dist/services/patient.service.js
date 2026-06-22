@@ -7,16 +7,40 @@ exports.addEmergencyContact = exports.addMedicalHistory = exports.updatePatient 
 const db_1 = __importDefault(require("../config/db"));
 const errors_1 = require("../utils/errors");
 const createPatient = async (data) => {
+    let userId = data.userId;
+    if (!userId) {
+        const existingUser = await db_1.default.user.findUnique({
+            where: { email: data.email },
+        });
+        if (existingUser) {
+            userId = existingUser.id;
+        }
+        else {
+            const username = `${data.firstName.toLowerCase()}_${data.lastName.toLowerCase()}_${Date.now().toString().slice(-4)}`;
+            const user = await db_1.default.user.create({
+                data: {
+                    username,
+                    email: data.email,
+                    passwordHash: '$2b$10$tJ24.XnL4hM2z.b2i0Wk7uqB.n/5fF78n.lSveO1Y.B.m2f.Z2C5m', // Patient@123
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    phone: data.phone || null,
+                    roles: ['PATIENT']
+                }
+            });
+            userId = user.id;
+        }
+    }
     // Check if profile already exists for this user
     const existing = await db_1.default.patient.findUnique({
-        where: { userId: data.userId },
+        where: { userId },
     });
     if (existing) {
         throw new errors_1.BadRequestError('Patient profile already exists for this user');
     }
     return await db_1.default.patient.create({
         data: {
-            userId: data.userId,
+            userId,
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,

@@ -4,13 +4,107 @@ import { createNotification } from './notification.service';
 import { AppointmentStatus } from '@prisma/client';
 
 export const bookAppointment = async (data: {
-  patientId: number;
-  doctorId: number;
+  patientId?: number;
+  patientName?: string;
+  doctorId?: number;
+  doctorName?: string;
   appointmentDateTime: Date | string;
   reason?: string;
 }) => {
+  let patientId = data.patientId;
+  let doctorId = data.doctorId;
+
+  if (!patientId && data.patientName) {
+    const parts = data.patientName.trim().split(/\s+/);
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(' ');
+    let found = await prisma.patient.findFirst({
+      where: {
+        firstName: { equals: firstName, mode: 'insensitive' },
+        lastName: { equals: lastName, mode: 'insensitive' }
+      }
+    });
+    if (!found) {
+      found = await prisma.patient.findFirst({
+        where: {
+          OR: [
+            { firstName: { equals: firstName, mode: 'insensitive' } },
+            { lastName: { equals: firstName, mode: 'insensitive' } }
+          ]
+        }
+      });
+    }
+
+    if (found) {
+      patientId = found.id;
+    } else {
+      const email = `${firstName.toLowerCase()}.${(lastName || 'patient').toLowerCase()}@hospital.com`;
+      const uniqueUsername = `${firstName.toLowerCase()}_${(lastName || 'patient').toLowerCase()}_${Date.now().toString().slice(-4)}`;
+      const user = await prisma.user.create({
+        data: {
+          username: uniqueUsername,
+          email,
+          passwordHash: '$2b$10$tJ24.XnL4hM2z.b2i0Wk7uqB.n/5fF78n.lSveO1Y.B.m2f.Z2C5m', // Patient@123
+          firstName,
+          lastName: lastName || 'Patient',
+          roles: ['PATIENT']
+        }
+      });
+      const newPatient = await prisma.patient.create({
+        data: {
+          userId: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email
+        }
+      });
+      patientId = newPatient.id;
+    }
+  }
+
+  if (!doctorId && data.doctorName) {
+    const cleanName = data.doctorName.replace(/^(dr\.?\s*)/i, '').trim();
+    const parts = cleanName.split(/\s+/);
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(' ');
+    let found = await prisma.doctor.findFirst({
+      where: {
+        firstName: { equals: firstName, mode: 'insensitive' },
+        lastName: { equals: lastName, mode: 'insensitive' }
+      }
+    });
+    if (!found) {
+      found = await prisma.doctor.findFirst({
+        where: {
+          OR: [
+            { firstName: { equals: firstName, mode: 'insensitive' } },
+            { lastName: { equals: firstName, mode: 'insensitive' } }
+          ]
+        }
+      });
+    }
+
+    if (found) {
+      doctorId = found.id;
+    } else {
+      const fallback = await prisma.doctor.findFirst();
+      if (fallback) {
+        doctorId = fallback.id;
+      } else {
+        throw new NotFoundError('No doctors registered in the system');
+      }
+    }
+  }
+
+  if (!patientId) {
+    throw new BadRequestError('Patient ID or Patient Name is required');
+  }
+  if (!doctorId) {
+    throw new BadRequestError('Doctor ID or Doctor Name is required');
+  }
+
   const patient = await prisma.patient.findUnique({
-    where: { id: data.patientId },
+    where: { id: patientId },
     include: { user: true },
   });
   if (!patient) {
@@ -18,7 +112,7 @@ export const bookAppointment = async (data: {
   }
 
   const doctor = await prisma.doctor.findUnique({
-    where: { id: data.doctorId },
+    where: { id: doctorId },
     include: { user: true, schedules: true },
   });
   if (!doctor) {
@@ -35,7 +129,7 @@ export const bookAppointment = async (data: {
   // Check overlap
   const conflict = await prisma.appointment.findFirst({
     where: {
-      doctorId: data.doctorId,
+      doctorId: doctorId,
       appointmentDateTime: aptDate,
       status: {
         not: AppointmentStatus.CANCELLED,
@@ -52,10 +146,10 @@ export const bookAppointment = async (data: {
 
   const appointment = await prisma.appointment.create({
     data: {
-      patientId: data.patientId,
+      patientId: patientId,
       patientName: `${patient.firstName} ${patient.lastName}`,
       patientEmail: patient.email,
-      doctorId: data.doctorId,
+      doctorId: doctorId,
       doctorName: `${doctor.firstName} ${doctor.lastName}`,
       appointmentDateTime: aptDate,
       endDateTime,

@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDoctorPrescriptions = exports.getPatientPrescriptions = exports.getPrescriptionByAppointment = exports.getPrescription = exports.createPrescription = void 0;
+exports.getAllPrescriptions = exports.getDoctorPrescriptions = exports.getPatientPrescriptions = exports.getPrescriptionByAppointment = exports.getPrescription = exports.createPrescription = void 0;
 const prescriptionService = __importStar(require("../services/prescription.service"));
 const createPrescription = async (req, res, next) => {
     try {
@@ -109,3 +109,18 @@ const getDoctorPrescriptions = async (req, res, next) => {
     }
 };
 exports.getDoctorPrescriptions = getDoctorPrescriptions;
+const getAllPrescriptions = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page || '0', 10);
+        const size = parseInt(req.query.size || '20', 10);
+        const result = await prescriptionService.getAllPrescriptions(page, size);
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.getAllPrescriptions = getAllPrescriptions;
