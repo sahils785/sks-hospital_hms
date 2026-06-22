@@ -47,4 +47,11 @@ router.get(
   prescriptionController.getDoctorPrescriptions
 );
 
+router.put(
+  '/:id',
+  authenticate,
+  authorize([Role.ADMIN, Role.DOCTOR]),
+  prescriptionController.updatePrescription
+);
+
 export default router;

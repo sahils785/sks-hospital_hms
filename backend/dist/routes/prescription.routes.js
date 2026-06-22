@@ -44,4 +44,5 @@ router.get('/:id', auth_middleware_1.authenticate, (0, auth_middleware_1.authori
 router.get('/appointment/:appointmentId', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR, client_1.Role.PHARMACIST, client_1.Role.PATIENT]), prescriptionController.getPrescriptionByAppointment);
 router.get('/patient/:patientId', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR, client_1.Role.PHARMACIST, client_1.Role.PATIENT]), prescriptionController.getPatientPrescriptions);
 router.get('/doctor/:doctorId', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR]), prescriptionController.getDoctorPrescriptions);
+router.put('/:id', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR]), prescriptionController.updatePrescription);
 exports.default = router;

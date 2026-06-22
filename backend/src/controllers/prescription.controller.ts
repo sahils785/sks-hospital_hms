@@ -89,3 +89,18 @@ export const getAllPrescriptions = async (req: Request, res: Response, next: Nex
     next(error);
   }
 };
+
+export const updatePrescription = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const result = await prescriptionService.updatePrescription(id, req.body);
+    res.status(200).json({
+      success: true,
+      message: 'Prescription updated successfully',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
